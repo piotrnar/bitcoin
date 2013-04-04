@@ -48,7 +48,9 @@ public:
         /** Is transaction confirmed? */
         ConfirmedRole,
         /** Formatted amount, without brackets when unconfirmed */
-        FormattedAmountRole
+        FormattedAmountRole,
+        /** Raw transaction data as hex encoded string */
+        RawTransactionData
     };
 
     int rowCount(const QModelIndex &parent) const;

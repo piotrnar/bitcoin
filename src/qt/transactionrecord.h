@@ -77,21 +77,22 @@ public:
     static const int NumConfirmations = 6;
 
     TransactionRecord():
-            hash(), time(0), type(Other), address(""), debit(0), credit(0), idx(0)
+            hash(), time(0), type(Other), address(""), debit(0), credit(0),
+            idx(0), rawtransaction("")
     {
     }
 
-    TransactionRecord(uint256 hash, int64 time):
+    TransactionRecord(uint256 hash, int64 time, std::string raw):
             hash(hash), time(time), type(Other), address(""), debit(0),
-            credit(0), idx(0)
+            credit(0), rawtransaction(raw)
     {
     }
 
     TransactionRecord(uint256 hash, int64 time,
                 Type type, const std::string &address,
-                int64 debit, int64 credit):
+                int64 debit, int64 credit, std::string raw):
             hash(hash), time(time), type(type), address(address), debit(debit), credit(credit),
-            idx(0)
+            idx(0), rawtransaction(raw)
     {
     }
 
@@ -108,6 +109,7 @@ public:
     std::string address;
     int64 debit;
     int64 credit;
+    std::string rawtransaction;
     /**@}*/
 
     /** Subtransaction index, for sort key */

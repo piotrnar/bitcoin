@@ -31,6 +31,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
     uint256 hash = wtx.GetHash();
     std::map<std::string, std::string> mapValue = wtx.mapValue;
 
+    CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+    ssTx << (CTransaction)wtx;
+    std::string rawtransaction = HexStr(ssTx.begin(), ssTx.end());
+
     if (nNet > 0 || wtx.IsCoinBase())
     {
         //
@@ -40,7 +44,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         {
             if(wallet->IsMine(txout))
             {
-                TransactionRecord sub(hash, nTime);
+                TransactionRecord sub(hash, nTime, rawtransaction);
                 CTxDestination address;
                 sub.idx = parts.size(); // sequence number
                 sub.credit = txout.nValue;
@@ -82,7 +86,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             int64 nChange = wtx.GetChange();
 
             parts.append(TransactionRecord(hash, nTime, TransactionRecord::SendToSelf, "",
-                            -(nDebit - nChange), nCredit - nChange));
+                            -(nDebit - nChange), nCredit - nChange, rawtransaction));
         }
         else if (fAllFromMe)
         {
@@ -94,7 +98,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             for (unsigned int nOut = 0; nOut < wtx.vout.size(); nOut++)
             {
                 const CTxOut& txout = wtx.vout[nOut];
-                TransactionRecord sub(hash, nTime);
+                TransactionRecord sub(hash, nTime, rawtransaction);
                 sub.idx = parts.size();
 
                 if(wallet->IsMine(txout))
@@ -135,7 +139,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             //
             // Mixed debit transaction, can't break down payees
             //
-            parts.append(TransactionRecord(hash, nTime, TransactionRecord::Other, "", nNet, 0));
+            parts.append(TransactionRecord(hash, nTime, TransactionRecord::Other, "", nNet, 0, rawtransaction));
         }
     }
 

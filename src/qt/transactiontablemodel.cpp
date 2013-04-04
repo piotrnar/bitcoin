@@ -576,6 +576,8 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
                                           rec->status.maturity != TransactionStatus::Mature);
     case FormattedAmountRole:
         return formatTxAmount(rec, false);
+    case RawTransactionData:
+        return QString::fromStdString(rec->rawtransaction);
     }
     return QVariant();
 }
