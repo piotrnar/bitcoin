@@ -651,14 +651,13 @@ Value sendmany(const Array& params, bool fHelp)
             "amounts are double-precision floating point numbers"
             + HelpRequiringPassphrase());
 
-    string strAccount = AccountFromValue(params[0]);
+    string strAccount = params[0].get_str();
     Object sendTo = params[1].get_obj();
     int nMinDepth = 1;
     if (params.size() > 2)
         nMinDepth = params[2].get_int();
 
     CWalletTx wtx;
-    wtx.strFromAccount = strAccount;
     if (params.size() > 3 && params[3].type() != null_type && !params[3].get_str().empty())
         wtx.mapValue["comment"] = params[3].get_str();
 
@@ -687,7 +686,16 @@ Value sendmany(const Array& params, bool fHelp)
     EnsureWalletIsUnlocked();
 
     // Check funds
-    int64 nBalance = GetAccountBalance(strAccount, nMinDepth);
+    int64 nBalance;
+    if (strAccount=="*")
+    {
+        nBalance = pwalletMain->GetBalance();
+    }
+    else
+    {
+        wtx.strFromAccount = strAccount;
+        nBalance = GetAccountBalance(strAccount, nMinDepth);
+    }
     if (totalAmount > nBalance)
         throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, "Account has insufficient funds");
 
