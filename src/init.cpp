@@ -341,7 +341,6 @@ std::string HelpMessage()
         "  -upgradewallet         " + _("Upgrade wallet to latest format") + "\n" +
         "  -keypool=<n>           " + _("Set key pool size to <n> (default: 100)") + "\n" +
         "  -rescan                " + _("Rescan the block chain for missing wallet transactions") + "\n" +
-        "  -purgetransactions     " + _("Use together with -rescan to purge all the local transactions") + "\n" +
         "  -salvagewallet         " + _("Attempt to recover private keys from a corrupt wallet.dat") + "\n" +
         "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 288, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-4, default: 3)") + "\n" +
@@ -952,18 +951,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     CBlockIndex *pindexRescan = pindexBest;
     if (GetBoolArg("-rescan"))
-    {
         pindexRescan = pindexGenesisBlock;
-        if (GetBoolArg("-purgetransactions"))
-        {
-            uiInterface.InitMessage(_("Purging wallet transactions..."));
-            for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it)
-            {
-                CWalletTx* wtx = &((*it).second);
-                pwalletMain->EraseFromWallet(wtx->GetHash());
-            }
-        }
-    }
     else
     {
         CWalletDB walletdb("wallet.dat");
