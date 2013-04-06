@@ -217,16 +217,16 @@ bool AppInit(int argc, char* argv[])
         PrintExceptionContinue(NULL, "AppInit()");
     }
     if (!fRet) {
-      if (detectShutdownThread)
-        detectShutdownThread->interrupt();
-      threadGroup.interrupt_all();
+        if (detectShutdownThread)
+            detectShutdownThread->interrupt();
+        threadGroup.interrupt_all();
     }
 
     if (detectShutdownThread)
     {
         detectShutdownThread->join();
         delete detectShutdownThread;
-	detectShutdownThread = NULL;
+        detectShutdownThread = NULL;
     }
     Shutdown();
 
@@ -376,7 +376,6 @@ struct CImportingNow
         fImporting = false;
     }
 };
-
 
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 {
@@ -634,7 +633,6 @@ bool AppInit2(boost::thread_group& threadGroup)
     // ********************************************************* Step 6: network initialization
 
     int nSocksVersion = GetArg("-socks", 5);
-
     if (nSocksVersion != 4 && nSocksVersion != 5)
         return InitError(strprintf(_("Unknown -socks proxy version requested: %i"), nSocksVersion));
 
@@ -734,6 +732,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     fReindex = GetBoolArg("-reindex");
 
+    // Todo: Check if needed, because in step 5 we do the same
     if (!bitdb.Open(GetDataDir()))
     {
         string msg = strprintf(_("Error initializing database environment %s!"
